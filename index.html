@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Upload to Firebase</title>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-storage-compat.js"></script>
+</head>
+<body>
+  <h2>Upload File to Firebase Storage</h2>
+  <input type="file" id="fileInput" />
+  <button onclick="uploadFile()">Upload</button>
+  <p id="status"></p>
+
+  <script>
+    // ✅ Your Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyBZ9HqiljdotI422ZZu53As3hplmzqm8kw",
+      authDomain: "capture-photo-3e253.firebaseapp.com",
+      projectId: "capture-photo-3e253",
+      storageBucket: "capture-photo-3e253.appspot.com",
+      messagingSenderId: "412075114766",
+      appId: "1:412075114766:web:d137dcb5d4671efa8f575f",
+      measurementId: "G-QV68GQ5J0B"
+    };
+
+    // ✅ Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
+
+    function uploadFile() {
+      const file = document.getElementById('fileInput').files[0];
+      if (!file) return alert("Please select a file");
+
+      const ref = storage.ref('uploads/' + file.name);
+      const uploadTask = ref.put(file);
+
+      uploadTask.on('state_changed',
+        (snapshot) => {
+          const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          document.getElementById('status').textContent = `Uploading: ${progress.toFixed(0)}%`;
+        },
+        (error) => {
+          document.getElementById('status').textContent = `❌ Error: ${error.message}`;
+        },
+        () => {
+          uploadTask.snapshot.ref.getDownloadURL().then((url) => {
+            document.getElementById('status').innerHTML = `✅ Uploaded! <a href="${url}" target="_blank">View File</a>`;
+          });
+        }
+      );
+    }
+  </script>
+</body>
+</html>
