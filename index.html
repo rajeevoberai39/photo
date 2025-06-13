@@ -21,8 +21,6 @@
         body: formData
       });
       const data = await res.json();
-      document.getElementById("preview").src = data.secure_url;
-      alert("Uploaded to Cloudinary:\n" + data.secure_url);
     }
   </script>
 </body>
